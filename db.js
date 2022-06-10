@@ -5,7 +5,6 @@ const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const userSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     username: { type: String, required: true },
     logs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Logs' }],
 });
@@ -24,7 +23,7 @@ const createUser = (username, done) => {
     const newUser = new User({ username });
 
     newUser.save((err, savedUser) => {
-        if (err) return done(err);
+        if (err) done(err);
         else done(null, savedUser);
     });
 };

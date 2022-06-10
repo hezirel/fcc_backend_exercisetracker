@@ -27,12 +27,10 @@ const listUser = require("./db.js").listUser;
 app.route("/api/users")
   .post((req, res) => {
     const username = req.body.username;
+    console.log(username);
     addUser(username, (err, user) => {
       if (err) res.send(err);
-      else res.json({
-        username: user.username,
-        _id: user._id
-      })
+      else res.send(user);
     });
   })
   .get((req, res) => {
