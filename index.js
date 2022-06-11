@@ -27,7 +27,6 @@ const listUser = require("./db.js").listUser;
 app.route("/api/users")
   .post((req, res) => {
     const username = req.body.username;
-    console.log(username);
     addUser(username, (err, user) => {
       if (err) res.send(err);
       else res.send(user);
@@ -37,5 +36,17 @@ app.route("/api/users")
     listUser((err, users) => {
       if (err) res.send(err);
       else res.send(users);
+    });
+  });
+
+const addLog = require("./db.js").addLog;
+
+app.route("/api/users/:_id/exercises")
+  .post((req, res) => {
+    addLog(req.body, (req.params._id), (err, log) => {
+      if (err) res.send(err);
+      else {
+        res.json(log);
+      }
     });
   });
