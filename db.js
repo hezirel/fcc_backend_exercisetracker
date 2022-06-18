@@ -6,6 +6,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
+    count: 0,
     logs: [{ type: Array}]
 });
 
@@ -35,7 +36,6 @@ const listUser = (done) => {
         else done(null, users);
     });
 }
-
 
 const addLog = ({description, duration, date: inputDate}, _id, done) => {
 
