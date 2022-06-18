@@ -44,10 +44,9 @@ const addLog = ({description, duration, date: inputDate}, _id, done) => {
     const newLog = new Log({
         _id,
         description,
-        duration: Number(duration),
-        date: dateFormat(inputDate)
+        duration,
+        date: inputDate
     });
-    console.log("NewLog = ", newLog);
     User.findByIdAndUpdate(_id, 
         {
             $push: {
