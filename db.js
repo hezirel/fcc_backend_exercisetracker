@@ -61,7 +61,6 @@ const addLog = ({description, duration, date: inputDate}, _id, done) => {
                     else {
                         const {username} = savedUser;
                         const resolve = {_id, username, date: dateFormat(inputDate), duration, description};
-                        console.log(resolve); 
                         done(null, resolve);
                     }
                 });
@@ -69,6 +68,14 @@ const addLog = ({description, duration, date: inputDate}, _id, done) => {
         });
 }
 
+const getUser = (_id, done) => {
+    User.findById(_id, (err, user) => {
+        if (err) done(err);
+        else done(null, user);
+    });
+};
+
 exports.createUser = createUser;
 exports.listUser = listUser;
 exports.addLog = addLog;
+exports.getUser = getUser;

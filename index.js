@@ -54,3 +54,13 @@ app.route("/api/users/:_id/exercises")
       }
     });
   });
+
+const getUser = require("./db.js").getUser;
+
+app.route("/api/users/:_id/logs")
+  .get((req, res) => {
+    getUser(req.params._id, (err, user) => {
+      if (err) res.send(err);
+      else res.json(user);
+    });
+  });
