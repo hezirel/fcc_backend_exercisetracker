@@ -43,7 +43,11 @@ const addLog = require("./db.js").addLog;
 
 app.route("/api/users/:_id/exercises")
   .post((req, res) => {
-    addLog(req.body, (req.params._id), (err, log) => {
+    addLog(({
+      description: req.body.description,
+      duration: Number(req.body.duration),
+      date: new Date(req.body.date || null)
+    }), (req.params._id), (err, log) => {
       if (err) res.send(err);
       else {
         res.json(log);

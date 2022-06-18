@@ -9,8 +9,6 @@ const userSchema = new mongoose.Schema({
     logs: [{ type: Array}]
 });
 
-const dateFormat = (date) => date.toString().split(' ').slice(0, 4).join(' ');
-
 const logSchema = new mongoose.Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     username: { type: String, required: false },
@@ -38,14 +36,16 @@ const listUser = (done) => {
     });
 }
 
+
 const addLog = ({description, duration, date: inputDate}, _id, done) => {
 
-    const newDate = dateFormat(inputDate ? new Date(inputDate) : new Date());
+    const dateFormat = (date) => date.toString().split(' ').slice(0, 4).join(' ');
+
     const newLog = new Log({
         _id,
         description,
-        duration: parseInt(duration),
-        date: newDate
+        duration: Number(duration),
+        date: dateFormat(inputDate)
     });
     console.log("NewLog = ", newLog);
     User.findByIdAndUpdate(_id, 
@@ -61,7 +61,7 @@ const addLog = ({description, duration, date: inputDate}, _id, done) => {
                     if (err) done(err);
                     else {
                         const {username} = savedUser;
-                        const resolve = {_id, username, date: newDate, duration: parseInt(duration), description};
+                        const resolve = {_id, username, date: dateFormat(inputDate), duration, description};
                         console.log(resolve); 
                         done(null, resolve);
                     }
