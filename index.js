@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/users", (req, res, next) => {
-  console.log(`${req.method} ${req.path} ${JSON.stringify(req.body)}`);
+  //console.log(`${req.method} ${req.path} ${JSON.stringify(req.body)}`);
   next();
 });
 
@@ -46,7 +46,7 @@ app.route("/api/users/:_id/exercises")
     addLog(({
       description: req.body.description,
       duration: Number(req.body.duration),
-      date: new Date(req.body.date || null)
+      date: new Date(req.body.date || Date()),
     }), (req.params._id), (err, log) => {
       if (err) res.send(err);
       else {
@@ -59,7 +59,7 @@ const getUser = require("./db.js").getUser;
 
 app.route("/api/users/:_id/logs")
   .get((req, res) => {
-    getUser(req.params._id, (err, user) => {
+    getUser(req.params, req.query, (err, user) => {
       if (err) res.send(err);
       else res.json(user);
     });
