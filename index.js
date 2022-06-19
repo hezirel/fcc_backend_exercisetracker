@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/users", (req, res, next) => {
-  console.log(`${req.method} ${req.path} ${JSON.stringify(req.body)}`);
+  console.log(`${req.method} ${req.path} ${JSON.stringify(req.body)} ${JSON.stringify(req.query)}`);
   next();
 });
 
@@ -61,6 +61,9 @@ app.route("/api/users/:_id/logs")
   .get((req, res) => {
     getUser(req.params, req.query, (err, user) => {
       if (err) res.send(err);
-      else res.json(user);
+      else {
+        console.log(user);
+        res.json(user);
+      }
     });
   });

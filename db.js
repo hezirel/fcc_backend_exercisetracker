@@ -5,7 +5,6 @@ const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const logSchema = new mongoose.Schema({
-    username: { type: String, required: false },
     description: { type: String, required: true },
     duration: { type: Number, required: true },
     date: { type: String, required: true }
@@ -69,26 +68,13 @@ const getUser = ({_id}, {from, to, limit}, done) => {
     User.findById(_id, (err, user) => {
         if (err) done(err);
         else {
-                const resolve = {
-                    _id: user._id,
-                    username: user.username,
-                    count: user.log.length,
-                    log: user.log.map((log, index) => {
-                        return (limit && 
-                                ((index+1) <= parseInt(limit)) &&
-                                    {
-                                        description: log.description,
-                                        duration: log.duration,
-                                        date: log.date
-                                    }
-                                ) || {
-                                    description: log.description,
-                                    duration: log.duration,
-                                    date: log.date
-                                };
-                    })
-                }
-                done(null, resolve);
+            let resolve = {
+                _id: user._id,
+                username: user.username,
+                count: user.log.length,
+                log: user.log.slice(0, parseInt(limit) || user.log.length)
+            };
+            done(null, resolve);
         }
     });
 };
