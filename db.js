@@ -73,11 +73,20 @@ const getUser = ({_id}, {from, to, limit}, done) => {
                     _id: user._id,
                     username: user.username,
                     count: user.log.length,
-                    log: user.log.map(log => ({
-                        description: log.description,
-                        duration: log.duration,
-                        date: log.date
-                    }))
+                    log: user.log.map((log, index) => {
+                        return (limit && 
+                                ((index+1) <= parseInt(limit)) &&
+                                    {
+                                        description: log.description,
+                                        duration: log.duration,
+                                        date: log.date
+                                    }
+                                ) || {
+                                    description: log.description,
+                                    duration: log.duration,
+                                    date: log.date
+                                };
+                    })
                 }
                 done(null, resolve);
         }
