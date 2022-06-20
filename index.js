@@ -59,10 +59,16 @@ const getUser = require("./db.js").getUser;
 
 app.route("/api/users/:_id/logs")
   .get((req, res) => {
-    getUser(req.params, req.query, (err, user) => {
+    const from = new Date(req.query.from);
+    const to = new Date(req.query.to);
+    const limit = Number(req.query.limit);
+    getUser(req.params, {
+      limit: isNaN(limit) ? false : limit,
+      from: isNaN(from) ? false : from,
+      to: isNaN(to) ? false : to
+    }, (err, user) => {
       if (err) res.send(err);
       else {
-        console.log(user);
         res.json(user);
       }
     });

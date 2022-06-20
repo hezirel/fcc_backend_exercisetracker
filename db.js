@@ -7,14 +7,14 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const logSchema = new mongoose.Schema({
     description: { type: String, required: true },
     duration: { type: Number, required: true },
-    date: { type: String, required: true }
+    date: { type: Date, required: true }
 });
 
 const Log = mongoose.model('Log', logSchema);
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
-    log: [{ type: logSchema }]
+    log: [logSchema]
     }
 );
 
@@ -36,14 +36,15 @@ const listUser = (done) => {
     });
 }
 
+const dateFormat = (date) => date.toString().split(' ').slice(0, 4).join(' ');
 const addLog = ({description, duration, date: inputDate}, userId, done) => {
 
-    const dateFormat = (date) => date.toString().split(' ').slice(0, 4).join(' ');
 
     const newLog = new Log({
+        userId,
         description,
         duration,
-        date: inputDate.toDateString()
+        date: inputDate,
     });
     User.findOneAndUpdate({_id: userId}, {$push: {log: newLog}}, (err, updatedUser) => {
         if (err) done(err);
@@ -64,19 +65,21 @@ const addLog = ({description, duration, date: inputDate}, userId, done) => {
 
 }
 
-const getUser = ({_id}, {from, to, limit}, done) => {
-    User.findById(_id, (err, user) => {
-        if (err) done(err);
-        else {
-            let resolve = {
-                _id: user._id,
-                username: user.username,
-                count: user.log.length,
-                log: user.log.slice(0, parseInt(limit) || user.log.length)
-            };
-            done(null, resolve);
+const getUser = async ({_id: userId}, {from, to, limit}, done) => {
+    console.log(from, to, limit);
+    const user = await User.aggregate([{
+        $match: { _id: mongoose.Types.ObjectId(userId) }
+    }, {
+        $project: {
+            username: 1,
+            count: { $size: '$log' },
+            log: {
+                $slice: ['$log', 0, limit]
+            }
         }
-    });
+    }]);
+
+    done(null, user);
 };
 
 exports.createUser = createUser;
