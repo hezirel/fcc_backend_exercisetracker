@@ -65,7 +65,8 @@ app.route("/api/users/:_id/logs")
     getUser(req.params, {
       limit: isNaN(limit) ? false : limit,
       from: isNaN(from) ? false : from,
-      to: isNaN(to) ? false : to
+      to: isNaN(to) ? false : to,
+      duration: req.query.duration ? Number(req.query.duration) : false
     }, (err, user) => {
       if (err) res.send(err);
       else {

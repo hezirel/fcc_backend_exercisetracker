@@ -65,19 +65,43 @@ const addLog = ({description, duration, date: inputDate}, userId, done) => {
 
 }
 
-const getUser = async ({_id: userId}, {from, to, limit}, done) => {
+const getUser = async ({_id: userId}, {from, to, limit, duration}, done) => {
     console.log(from, to, limit);
-    const user = await User.aggregate([{
-        $match: { _id: mongoose.Types.ObjectId(userId) }
-    }, {
-        $project: {
-            username: 1,
-            count: { $size: '$log' },
-            log: {
-                $slice: ['$log', 0, limit]
+    const user = await User.aggregate([
+        {
+            $match: { _id: mongoose.Types.ObjectId(userId) }
+        },
+        {
+            $project: {
+                _id: 1,
+                username: 1,
+                log: 1
+            }
+        },
+        {
+            $unwind: '$log'
+        },
+        {
+            $cond: {
+                if: from,
+                then: {
+                    $match: {
+                        'log.date': {
+                            $gte: from,
+                            $lte: to
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                username: 1,
+                log: 1
             }
         }
-    }]);
+    ]);
 
     done(null, user);
 };
